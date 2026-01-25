@@ -1,0 +1,1 @@
+enum CalibrationMethod { espresso, filter }
