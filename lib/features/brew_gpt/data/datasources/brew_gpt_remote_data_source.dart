@@ -1,7 +1,5 @@
-import 'dart:convert';
 import 'package:dio/dio.dart';
 import '../../domain/entities/brew_advice.dart';
-import '../../../../core/error/failures.dart';
 
 abstract class BrewGPTRemoteDataSource {
   Future<BrewAdvice> getAdvice({

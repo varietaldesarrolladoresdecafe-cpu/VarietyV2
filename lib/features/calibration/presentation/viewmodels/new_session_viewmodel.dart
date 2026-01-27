@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import '../../domain/entities/calibration_session.dart';
 import '../../domain/entities/calibration_method.dart';
 
 class NewSessionViewModel extends ChangeNotifier {

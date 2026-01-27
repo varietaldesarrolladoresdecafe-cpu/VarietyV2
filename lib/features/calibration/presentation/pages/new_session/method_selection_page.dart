@@ -80,7 +80,6 @@ class _MethodCard extends StatelessWidget {
   final VoidCallback onTap;
 
   const _MethodCard({
-    super.key,
     required this.icon,
     required this.title,
     required this.description,

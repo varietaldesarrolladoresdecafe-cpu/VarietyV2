@@ -3,10 +3,13 @@ import 'package:animate_do/animate_do.dart';
 import 'package:provider/provider.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/widgets/logo_widget.dart';
 import '../viewmodels/calibration_viewmodel.dart';
 import 'new_session/session_setup_page.dart';
 import 'history/history_page.dart';
+import 'sensory_evaluation/sensory_evaluation_page.dart';
 import '../../domain/entities/calibration_method.dart';
+import '../../../../features/brew_gpt/presentation/widgets/brew_gpt_chat_modal.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -80,13 +83,9 @@ class _HomePageState extends State<HomePage> {
                                 textAlign: TextAlign.left,
                               ),
                               const SizedBox(width: 24),
-                              Image.asset(
-                                'assets/images/logo.png',
-                                width: 60,
-                                height: 60,
-                                errorBuilder: (context, error, stackTrace) {
-                                  return const Icon(Icons.coffee, size: 40, color: AppColors.secondary);
-                                },
+                              LogoWidget(
+                                size: 60,
+                                circleBorderWidth: 2,
                               ),
                             ],
                           ),
@@ -224,6 +223,70 @@ class _HomePageState extends State<HomePage> {
               ),
             ),
           ),
+
+          // Tools Section Title
+          SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 40, 20, 20),
+              child: Text(
+                "TOOLS",
+                style: Theme.of(context).textTheme.displaySmall?.copyWith(
+                  fontFamily: 'Montserrat',
+                  fontWeight: FontWeight.w900,
+                  color: AppColors.textPrimary,
+                  letterSpacing: -1.0,
+                ),
+              ),
+            ),
+          ),
+
+          // Tools Cards
+          SliverToBoxAdapter(
+            child: SingleChildScrollView(
+              scrollDirection: Axis.horizontal,
+              padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 20),
+              clipBehavior: Clip.none,
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _MenuCard(
+                    title: "SENSORY\nEVALUATION",
+                    subtitle: "Start a new sensory evaluation",
+                    color: AppColors.cardEspresso,
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (_) => const SensoryEvaluationPage(),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  _MenuCard(
+                    title: "COMING\nSOON",
+                    subtitle: "New tool coming soon",
+                    color: AppColors.cardFilter,
+                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Esta herramienta estará disponible pronto'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                  _MenuCard(
+                    title: "EVALUATIONS\nHISTORY",
+                    subtitle: "Download detailed sensory reports",
+                    color: AppColors.cardHistory,
+                    onTap: () => ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text('Historial de evaluaciones - próximamente'),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 20),
+                ],
+              ),
+            ),
+          ),
           
           // Footer
           SliverToBoxAdapter(
@@ -244,6 +307,33 @@ class _HomePageState extends State<HomePage> {
 
           const SliverPadding(padding: EdgeInsets.only(bottom: 20)),
         ],
+      ),
+      floatingActionButton: FloatingActionButton.extended(
+        onPressed: _showBrewGPT,
+        backgroundColor: AppColors.secondary,
+        elevation: 6,
+        label: const Text(
+          'BrewGPT',
+          style: TextStyle(
+            fontWeight: FontWeight.bold,
+            color: Colors.white,
+          ),
+        ),
+        icon: const Icon(
+          Icons.smart_toy,
+          color: Colors.white,
+        ),
+      ),
+    );
+  }
+
+  void _showBrewGPT() {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      backgroundColor: AppColors.background,
+      builder: (context) => BrewGPTChatModal(
+        sessionInfo: {},
       ),
     );
   }
