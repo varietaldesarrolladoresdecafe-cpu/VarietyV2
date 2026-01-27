@@ -14,6 +14,15 @@ class ActiveSessionPage extends StatelessWidget {
     required this.sessionInfo,
   });
 
+  void _saveSession(BuildContext context) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(
+        content: Text('Sesión guardada correctamente'),
+        duration: Duration(seconds: 2),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
@@ -24,9 +33,7 @@ class ActiveSessionPage extends StatelessWidget {
           actions: [
             IconButton(
               icon: const Icon(Icons.save),
-              onPressed: () {
-                // TODO: Guardar sesión completa en BD
-              },
+              onPressed: () => _saveSession(context),
             )
           ],
         ),

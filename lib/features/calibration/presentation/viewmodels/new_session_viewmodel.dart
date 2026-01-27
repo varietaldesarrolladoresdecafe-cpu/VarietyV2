@@ -33,5 +33,21 @@ class NewSessionViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  // TODO: Implementar lógica de guardado
+  Map<String, dynamic> getSessionData() {
+    return {
+      'method': _selectedMethod?.toString(),
+      'coffeeVariety': coffeeVariety,
+      'roastLevel': roastLevel,
+      'restDays': restDays,
+      'beanDensity': beanDensity,
+    };
+  }
+
+  bool isValid() {
+    return _selectedMethod != null &&
+        (coffeeVariety?.isNotEmpty ?? false) &&
+        (roastLevel?.isNotEmpty ?? false) &&
+        restDays != null &&
+        (beanDensity?.isNotEmpty ?? false);
+  }
 }

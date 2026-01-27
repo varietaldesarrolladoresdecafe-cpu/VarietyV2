@@ -531,13 +531,46 @@ class _SensoryEvaluationPageState extends State<SensoryEvaluationPage>
   }
 
   void _saveEvaluation() {
-    // TODO: Implement save evaluation logic
+    final evaluationData = {
+      'sessionData': {
+        'sampleCount': widget.sessionData.sampleCount,
+        'brandName': widget.sessionData.brandName,
+        'variety': widget.sessionData.variety,
+        'origin': widget.sessionData.origin,
+        'process': widget.sessionData.process,
+        'roastType': widget.sessionData.roastType,
+      },
+      'samples': samples
+          .map((sample) => {
+                'sampleName': sample.sampleName,
+                'sliderValues': sample.sliderValues,
+                'selectedTags': {
+                  'aroma': sample.selectedAromaTags,
+                  'flavor': sample.selectedFlavorTags,
+                  'basicTaste': sample.selectedBasicTasteTags,
+                  'aftertaste': sample.selectedAftertasteTags,
+                  'mouthFeel': sample.selectedMouthFeelTags,
+                },
+                'notes': {
+                  'notesFragancia': sample.notesFragancia,
+                  'notesAroma': sample.notesAroma,
+                  'notesSabor': sample.notesSabor,
+                  'notesSaborResidual': sample.notesSaborResidual,
+                  'notesAcidez': sample.notesAcidez,
+                  'notesDulzor': sample.notesDulzor,
+                  'notesSensacionBoca': sample.notesSensacionBoca,
+                },
+              })
+          .toList(),
+      'timestamp': DateTime.now().toIso8601String(),
+    };
+
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
         content: Text(
           widget.sessionData.sampleCount > 1
               ? (currentSampleIndex == samples.length - 1
-                  ? 'Evaluación finalizada'
+                  ? 'Evaluación finalizada y guardada'
                   : 'Muestra guardada')
               : 'Evaluación guardada correctamente',
         ),
@@ -548,7 +581,7 @@ class _SensoryEvaluationPageState extends State<SensoryEvaluationPage>
     if (currentSampleIndex < samples.length - 1) {
       _nextSample();
     } else {
-      Navigator.pop(context);
+      Navigator.pop(context, evaluationData);
     }
   }
 }
