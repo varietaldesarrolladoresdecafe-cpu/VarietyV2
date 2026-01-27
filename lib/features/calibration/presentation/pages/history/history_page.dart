@@ -17,8 +17,8 @@ class _HistoryPageState extends State<HistoryPage> {
   @override
   void initState() {
     super.initState();
-    Future.microtask(() => 
-      Provider.of<CalibrationViewModel>(context, listen: false).loadSessions()
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      context.read<CalibrationViewModel>().loadSessions()
     );
   }
 
@@ -60,13 +60,13 @@ class _HistoryPageState extends State<HistoryPage> {
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Icon(Icons.history,
-                        size: 64, color: AppColors.textPrimary.withOpacity(0.3)),
+                        size: 64, color: AppColors.textPrimary.withValues(alpha: 0.3)),
                     const SizedBox(height: 16),
                     Text(
                       'No brew history yet',
                       style: GoogleFonts.montserrat(
                         fontSize: 18,
-                        color: AppColors.textPrimary.withOpacity(0.5),
+                        color: AppColors.textPrimary.withValues(alpha: 0.5),
                         fontWeight: FontWeight.w600,
                       ),
                     ),
@@ -92,7 +92,7 @@ class _HistoryPageState extends State<HistoryPage> {
                           borderRadius: BorderRadius.circular(24),
                           boxShadow: [
                             BoxShadow(
-                              color: Colors.black.withOpacity(0.05),
+                              color: Colors.black.withValues(alpha: 0.05),
                               blurRadius: 10,
                               offset: const Offset(0, 4),
                             ),
@@ -127,7 +127,7 @@ class _HistoryPageState extends State<HistoryPage> {
                                     style: GoogleFonts.montserrat(
                                       fontSize: 12,
                                       fontWeight: FontWeight.bold,
-                                      color: AppColors.textPrimary.withOpacity(0.6),
+                                      color: AppColors.textPrimary.withValues(alpha: 0.6),
                                     ),
                                   ),
                                 ),
@@ -138,8 +138,8 @@ class _HistoryPageState extends State<HistoryPage> {
                               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
                                 color: session.method.toLowerCase().contains('espresso') 
-                                    ? AppColors.cardEspresso.withOpacity(0.3)
-                                    : AppColors.cardFilter.withOpacity(0.3),
+                                    ? AppColors.cardEspresso.withValues(alpha: 0.3)
+                                    : AppColors.cardFilter.withValues(alpha: 0.3),
                                 borderRadius: BorderRadius.circular(8),
                               ),
                               child: Text(
@@ -193,3 +193,5 @@ class _HistoryPageState extends State<HistoryPage> {
     );
   }
 }
+
+

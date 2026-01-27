@@ -3,6 +3,7 @@ import 'package:equatable/equatable.dart';
 import '../../../../core/error/failures.dart';
 import '../../../../core/usecases/usecase.dart';
 import '../entities/brew_advice.dart';
+import '../entities/user_profile.dart';
 import '../repositories/brew_gpt_repository.dart';
 
 class GetBrewAdvice implements UseCase<BrewAdvice, BrewAdviceParams> {
@@ -18,6 +19,7 @@ class GetBrewAdvice implements UseCase<BrewAdvice, BrewAdviceParams> {
       lastRecipe: params.lastRecipe,
       problem: params.problem,
       sensoryAnalysis: params.sensoryAnalysis,
+      userProfile: params.userProfile,
     );
   }
 }
@@ -28,6 +30,7 @@ class BrewAdviceParams extends Equatable {
   final Map<String, dynamic> lastRecipe;
   final String problem;
   final String sensoryAnalysis;
+  final UserProfile? userProfile;
 
   const BrewAdviceParams({
     required this.method,
@@ -35,8 +38,9 @@ class BrewAdviceParams extends Equatable {
     required this.lastRecipe,
     required this.problem,
     required this.sensoryAnalysis,
+    this.userProfile,
   });
 
   @override
-  List<Object?> get props => [method, coffeeInfo, lastRecipe, problem, sensoryAnalysis];
+  List<Object?> get props => [method, coffeeInfo, lastRecipe, problem, sensoryAnalysis, userProfile];
 }

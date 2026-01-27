@@ -1,6 +1,7 @@
 import 'package:dartz/dartz.dart';
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/brew_advice.dart';
+import '../../domain/entities/user_profile.dart';
 import '../../domain/repositories/brew_gpt_repository.dart';
 import '../datasources/brew_gpt_remote_data_source.dart';
 
@@ -16,6 +17,7 @@ class BrewGPTRepositoryImpl implements BrewGPTRepository {
     required Map<String, dynamic> lastRecipe,
     required String problem,
     required String sensoryAnalysis,
+    UserProfile? userProfile,
   }) async {
     try {
       final result = await remoteDataSource.getAdvice(
@@ -24,6 +26,7 @@ class BrewGPTRepositoryImpl implements BrewGPTRepository {
         lastRecipe: lastRecipe,
         problem: problem,
         sensoryAnalysis: sensoryAnalysis,
+        userProfile: userProfile,
       );
       return Right(result);
     } catch (e) {

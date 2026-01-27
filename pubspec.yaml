@@ -50,6 +50,9 @@ dependencies:
   # Networking (BrewGPT)
   dio: ^5.4.1
 
+  # Local Storage
+  shared_preferences: ^2.2.2
+
   # UI & Utilities
   google_fonts: ^6.1.0
   uuid: ^4.3.3

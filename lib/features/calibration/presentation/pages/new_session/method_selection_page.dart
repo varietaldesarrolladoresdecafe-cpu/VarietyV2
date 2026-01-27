@@ -94,7 +94,7 @@ class _MethodCard extends StatelessWidget {
       color: Theme.of(context).cardTheme.color,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(24),
-        side: BorderSide(color: color.withOpacity(0.1), width: 1),
+        side: BorderSide(color: color.withValues(alpha: 0.1), width: 1),
       ),
       child: InkWell(
         onTap: onTap,
@@ -106,7 +106,7 @@ class _MethodCard extends StatelessWidget {
               Container(
                 padding: const EdgeInsets.all(16),
                 decoration: BoxDecoration(
-                  color: color.withOpacity(0.1),
+                  color: color.withValues(alpha: 0.1),
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
@@ -135,7 +135,7 @@ class _MethodCard extends StatelessWidget {
                   ],
                 ),
               ),
-              Icon(Icons.arrow_forward_ios, size: 16, color: color.withOpacity(0.5)),
+              Icon(Icons.arrow_forward_ios, size: 16, color: color.withValues(alpha: 0.5)),
             ],
           ),
         ),
@@ -143,3 +143,5 @@ class _MethodCard extends StatelessWidget {
     );
   }
 }
+
+

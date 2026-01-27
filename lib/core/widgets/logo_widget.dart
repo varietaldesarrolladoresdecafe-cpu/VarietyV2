@@ -20,7 +20,7 @@ class LogoWidget extends StatelessWidget {
         color: Colors.black,
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.2),
+            color: Colors.black.withValues(alpha: 0.2),
             blurRadius: 8,
             offset: const Offset(0, 4),
           ),
@@ -36,7 +36,7 @@ class LogoWidget extends StatelessWidget {
           ),
           child: Center(
             child: Image.asset(
-              'assets/images/Logo2.png',
+              'assets/images/logo2.png',
               width: size * 0.75,
               height: size * 0.75,
               fit: BoxFit.contain,
@@ -54,3 +54,6 @@ class LogoWidget extends StatelessWidget {
     );
   }
 }
+
+
+

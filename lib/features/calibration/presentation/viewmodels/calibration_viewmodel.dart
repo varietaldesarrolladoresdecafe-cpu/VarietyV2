@@ -44,11 +44,11 @@ class CalibrationViewModel extends ChangeNotifier {
 
   String _mapFailureToMessage(Failure failure) {
     switch (failure.runtimeType) {
-      case ServerFailure:
+      case ServerFailure _:
         return 'Error de Servidor';
-      case CacheFailure:
+      case CacheFailure _:
         return 'Error de Caché';
-      case DatabaseFailure:
+      case DatabaseFailure _:
         return 'Error de Base de Datos';
       default:
         return 'Error Inesperado';

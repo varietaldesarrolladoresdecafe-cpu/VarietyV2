@@ -64,7 +64,6 @@ class _SessionSetupForm extends StatefulWidget {
 class _SessionSetupFormState extends State<_SessionSetupForm> {
   final _formKey = GlobalKey<FormState>();
   final _varietyController = TextEditingController();
-  final _roastController = TextEditingController();
   final _daysController = TextEditingController();
 
   @override
@@ -83,7 +82,7 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
               child: Container(
                 padding: const EdgeInsets.all(24),
                 decoration: BoxDecoration(
-                  color: widget.accentColor.withOpacity(0.2),
+                  color: widget.accentColor.withValues(alpha: 0.2),
                   borderRadius: BorderRadius.circular(24),
                   border: Border.all(color: widget.accentColor, width: 2),
                 ),
@@ -129,7 +128,7 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                   borderRadius: BorderRadius.circular(24),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
+                      color: Colors.black.withValues(alpha: 0.05),
                       blurRadius: 10,
                       offset: const Offset(0, 4),
                     ),
@@ -156,14 +155,14 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                     DropdownButtonFormField<String>(
                       decoration: InputDecoration(
                         labelText: 'Roast Level',
-                        labelStyle: TextStyle(color: AppColors.textPrimary.withOpacity(0.6)),
+                        labelStyle: TextStyle(color: AppColors.textPrimary.withValues(alpha: 0.6)),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.textPrimary.withOpacity(0.2)),
+                          borderSide: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.2)),
                         ),
                         enabledBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide(color: AppColors.textPrimary.withOpacity(0.2)),
+                          borderSide: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.2)),
                         ),
                         focusedBorder: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),
@@ -280,16 +279,16 @@ class _CustomTextField extends StatelessWidget {
       style: GoogleFonts.montserrat(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: label,
-        labelStyle: TextStyle(color: AppColors.textPrimary.withOpacity(0.6)),
-        prefixIcon: icon != null ? Icon(icon, color: AppColors.textPrimary.withOpacity(0.5)) : null,
+        labelStyle: TextStyle(color: AppColors.textPrimary.withValues(alpha: 0.6)),
+        prefixIcon: icon != null ? Icon(icon, color: AppColors.textPrimary.withValues(alpha: 0.5)) : null,
         suffixText: suffixText,
         border: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textPrimary.withOpacity(0.2)),
+          borderSide: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.2)),
         ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
-          borderSide: BorderSide(color: AppColors.textPrimary.withOpacity(0.2)),
+          borderSide: BorderSide(color: AppColors.textPrimary.withValues(alpha: 0.2)),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(12),
@@ -301,3 +300,4 @@ class _CustomTextField extends StatelessWidget {
     );
   }
 }
+

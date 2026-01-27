@@ -10,8 +10,7 @@ class AppTheme {
         seedColor: AppColors.primary,
         primary: AppColors.primary,
         secondary: AppColors.secondary,
-        background: AppColors.background,
-        surface: AppColors.surface,
+        surface: AppColors.background,
         error: AppColors.error,
         brightness: Brightness.light,
       ),
@@ -54,7 +53,7 @@ class AppTheme {
       cardTheme: CardThemeData(
         color: AppColors.surface,
         elevation: 2,
-        shadowColor: Colors.black.withOpacity(0.05),
+        shadowColor: Colors.black.withValues(alpha: 0.05),
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       ),
@@ -95,3 +94,6 @@ class AppTheme {
     );
   }
 }
+
+
+

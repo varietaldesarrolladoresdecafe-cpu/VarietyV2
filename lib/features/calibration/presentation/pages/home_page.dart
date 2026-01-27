@@ -7,9 +7,9 @@ import '../../../../core/widgets/logo_widget.dart';
 import '../viewmodels/calibration_viewmodel.dart';
 import 'new_session/session_setup_page.dart';
 import 'history/history_page.dart';
-import 'sensory_evaluation/sensory_evaluation_page.dart';
+import 'calibration/coffee_session_setup_page.dart';
 import '../../domain/entities/calibration_method.dart';
-import '../../../../features/brew_gpt/presentation/widgets/brew_gpt_chat_modal.dart';
+import '../../../../features/brew_gpt/presentation/pages/brew_gpt_chat_page.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -23,8 +23,8 @@ class _HomePageState extends State<HomePage> {
   void initState() {
     super.initState();
     // Cargar datos en background por si acaso
-    Future.microtask(() => 
-      Provider.of<CalibrationViewModel>(context, listen: false).loadSessions()
+    WidgetsBinding.instance.addPostFrameCallback((_) =>
+      context.read<CalibrationViewModel>().loadSessions()
     );
   }
 
@@ -117,7 +117,7 @@ class _HomePageState extends State<HomePage> {
                                 fontWeight: FontWeight.bold,
                                 fontSize: 12,
                                 letterSpacing: 2.0,
-                                color: AppColors.textPrimary.withOpacity(0.6),
+                                color: AppColors.textPrimary.withValues(alpha: 0.6),
                               ),
                             ),
                           ),
@@ -256,7 +256,7 @@ class _HomePageState extends State<HomePage> {
                     onTap: () => Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const SensoryEvaluationPage(),
+                        builder: (_) => const CoffeeSessionSetupPage(),
                       ),
                     ),
                   ),
@@ -298,7 +298,7 @@ class _HomePageState extends State<HomePage> {
                   style: GoogleFonts.montserrat(
                     fontSize: 12,
                     fontWeight: FontWeight.bold,
-                    color: AppColors.textPrimary.withOpacity(0.5),
+                    color: AppColors.textPrimary.withValues(alpha: 0.5),
                   ),
                 ),
               ),
@@ -328,12 +328,10 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _showBrewGPT() {
-    showModalBottomSheet(
-      context: context,
-      isScrollControlled: true,
-      backgroundColor: AppColors.background,
-      builder: (context) => BrewGPTChatModal(
-        sessionInfo: {},
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const BrewGPTChatPage(),
       ),
     );
   }
@@ -380,7 +378,7 @@ class _MenuCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(24),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.05),
+            color: Colors.black.withValues(alpha: 0.05),
             blurRadius: 10,
             offset: const Offset(0, 4),
           ),
@@ -402,7 +400,7 @@ class _MenuCard extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 24,
                     fontWeight: FontWeight.w900,
-                    color: AppColors.textPrimary.withOpacity(0.9),
+                    color: AppColors.textPrimary.withValues(alpha: 0.9),
                   ),
                 ),
                 Text(
@@ -410,7 +408,7 @@ class _MenuCard extends StatelessWidget {
                   style: GoogleFonts.montserrat(
                     fontSize: 16,
                     fontWeight: FontWeight.w600,
-                    color: AppColors.textPrimary.withOpacity(0.8),
+                    color: AppColors.textPrimary.withValues(alpha: 0.8),
                     height: 1.2,
                   ),
                 ),
@@ -422,5 +420,7 @@ class _MenuCard extends StatelessWidget {
     );
   }
 }
+
+
 
 
