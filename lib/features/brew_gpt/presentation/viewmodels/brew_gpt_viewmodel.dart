@@ -27,6 +27,12 @@ class BrewGPTViewModel extends ChangeNotifier {
   UserProfile? _userProfile;
   UserProfile? get userProfile => _userProfile;
 
+  Map<String, dynamic>? _lastRecipe;
+  Map<String, dynamic>? get lastRecipe => _lastRecipe;
+
+  bool _shouldShowCalibrationOffer = false;
+  bool get shouldShowCalibrationOffer => _shouldShowCalibrationOffer;
+
   Future<void> loadUserProfile() async {
     try {
       _userProfile = await getUserProfile() ?? UserProfile.empty();
@@ -46,6 +52,13 @@ class BrewGPTViewModel extends ChangeNotifier {
       _error = 'Error al guardar perfil: $e';
       notifyListeners();
     }
+  }
+
+  // Set recipe for analysis
+  void setRecipeForAnalysis(Map<String, dynamic> recipe) {
+    _lastRecipe = recipe;
+    _shouldShowCalibrationOffer = true;
+    notifyListeners();
   }
 
   Future<void> askBrewGPT({
@@ -78,6 +91,67 @@ class BrewGPTViewModel extends ChangeNotifier {
       (advice) {
         _advice = advice;
         _isLoading = false;
+        _shouldShowCalibrationOffer = false; // Hide offer after showing advice
+        notifyListeners();
+      },
+    );
+  }
+
+  // Analyze recipe for calibration recommendation
+  Future<void> analyzeRecipeForCalibration(Map<String, dynamic> recipe) async {
+    _isLoading = true;
+    _error = null;
+    _advice = null;
+    notifyListeners();
+
+    // Extract information from recipe
+    final dose = recipe['dose'] ?? 'No especificada';
+    final yieldAmount = recipe['yield'] ?? 'No especificada';
+    final grind = recipe['grind'] ?? 'No especificada';
+    final time = recipe['time'] ?? 'No especificada';
+    final sensory = recipe['sensory'] ?? 'Sin notas';
+    final problem = recipe['problem'] ?? 'Sin problemas reportados';
+    final variety = recipe['variety'] ?? 'No especificada';
+    
+    // Build comprehensive problem statement for BrewGPT
+    String comprehensiveProblem = '''
+Acabo de registrar una receta de espresso con los siguientes parámetros:
+- Dosis: $dose g
+- Rendimiento: $yieldAmount g
+- Ajuste de molienda: $grind
+- Tiempo total: $time segundos
+- Notas sensoriales: $sensory
+- Problema detectado: $problem
+- Café: $variety
+${recipe['days'] != null ? '- Días de reposo: ${recipe['days']} días' : ''}
+${recipe['espresso_machine'] != null ? '- Máquina: ${recipe['espresso_machine']}' : ''}
+${recipe['grinder'] != null ? '- Molino: ${recipe['grinder']}' : ''}
+${recipe['preInfusionTime'] != null ? '- Tiempo pre-infusión: ${recipe['preInfusionTime']}s' : ''}
+${recipe['temperature'] != null ? '- Temperatura: ${recipe['temperature']}°C' : ''}
+${recipe['observations'] != null ? '- Observaciones: ${recipe['observations']}' : ''}
+
+Por favor, analiza esta receta y dame recomendaciones específicas para calibrar y mejorar el espresso.
+''';
+
+    final result = await getBrewAdvice(BrewAdviceParams(
+      method: 'Espresso',
+      coffeeInfo: variety,
+      lastRecipe: recipe,
+      problem: comprehensiveProblem,
+      sensoryAnalysis: sensory,
+      userProfile: _userProfile,
+    ));
+
+    result.fold(
+      (failure) {
+        _error = failure.message;
+        _isLoading = false;
+        notifyListeners();
+      },
+      (advice) {
+        _advice = advice;
+        _isLoading = false;
+        _shouldShowCalibrationOffer = false;
         notifyListeners();
       },
     );

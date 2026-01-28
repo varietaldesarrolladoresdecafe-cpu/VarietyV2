@@ -5,6 +5,7 @@ import 'core/services/service_locator.dart' as di;
 import 'core/theme/app_theme.dart';
 import 'features/calibration/presentation/pages/home_page.dart';
 import 'features/calibration/presentation/viewmodels/calibration_viewmodel.dart';
+import 'features/brew_gpt/presentation/viewmodels/brew_gpt_viewmodel.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -30,6 +31,7 @@ class VarietyCoffeeApp extends StatelessWidget {
       providers: [
         // Registrar ViewModels aquí
         ChangeNotifierProvider(create: (_) => di.sl<CalibrationViewModel>()),
+        ChangeNotifierProvider(create: (_) => di.sl<BrewGPTViewModel>()),
       ],
       child: MaterialApp(
         title: 'Variety Coffee Developers',

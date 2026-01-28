@@ -65,10 +65,14 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
   final _formKey = GlobalKey<FormState>();
   final _varietyController = TextEditingController();
   final _daysController = TextEditingController();
+  final _espressoMachineController = TextEditingController();
+  final _grinderController = TextEditingController();
+  DateTime? _roastDate;
 
   @override
   Widget build(BuildContext context) {
     final viewModel = context.watch<NewSessionViewModel>();
+    final isEspresso = viewModel.selectedMethod == CalibrationMethod.espresso;
 
     return Form(
       key: _formKey,
@@ -98,10 +102,18 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                       ),
                     ),
                     const SizedBox(height: 16),
-                    if (viewModel.selectedMethod == CalibrationMethod.espresso) ...[
+                    if (isEspresso) ...[
                       _CustomTextField(
+                        controller: _espressoMachineController,
                         label: 'Espresso Machine',
                         icon: Icons.coffee_maker,
+                        accentColor: widget.accentColor,
+                      ),
+                      const SizedBox(height: 16),
+                      _CustomTextField(
+                        controller: _grinderController,
+                        label: 'Grinder',
+                        icon: Icons.settings,
                         accentColor: widget.accentColor,
                       ),
                     ] else ...[
@@ -182,12 +194,74 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                       onChanged: (value) {},
                     ),
                     const SizedBox(height: 16),
+                    // Roast Date Picker
+                    GestureDetector(
+                      onTap: () async {
+                        final selectedDate = await showDatePicker(
+                          context: context,
+                          initialDate: _roastDate ?? DateTime.now(),
+                          firstDate: DateTime(2020),
+                          lastDate: DateTime.now(),
+                        );
+                        if (selectedDate != null) {
+                          setState(() {
+                            _roastDate = selectedDate;
+                            // Calculate days of rest automatically
+                            final now = DateTime.now();
+                            final daysOfRest = now.difference(selectedDate).inDays;
+                            _daysController.text = daysOfRest.toString();
+                          });
+                        }
+                      },
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 16),
+                        decoration: BoxDecoration(
+                          border: Border.all(
+                            color: AppColors.textPrimary.withValues(alpha: 0.2),
+                          ),
+                          borderRadius: BorderRadius.circular(12),
+                          color: AppColors.background,
+                        ),
+                        child: Row(
+                          children: [
+                            Icon(Icons.calendar_today, 
+                              color: AppColors.textPrimary.withValues(alpha: 0.5)),
+                            const SizedBox(width: 12),
+                            Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  'Roast Date',
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textPrimary.withValues(alpha: 0.6),
+                                  ),
+                                ),
+                                const SizedBox(height: 4),
+                                Text(
+                                  _roastDate != null 
+                                    ? '${_roastDate!.day}/${_roastDate!.month}/${_roastDate!.year}'
+                                    : 'Select date',
+                                  style: GoogleFonts.montserrat(
+                                    fontSize: 14,
+                                    fontWeight: FontWeight.w500,
+                                    color: AppColors.textPrimary,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 16),
                     _CustomTextField(
                       controller: _daysController,
                       label: 'Days off roast',
                       accentColor: widget.accentColor,
                       keyboardType: TextInputType.number,
                       suffixText: 'days',
+                      readOnly: true,
                     ),
                   ],
                 ),
@@ -204,20 +278,39 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                 child: FilledButton(
                   onPressed: () {
                     if (_formKey.currentState!.validate()) {
+                      final isEspresso = viewModel.selectedMethod == CalibrationMethod.espresso;
                       final sessionInfo = {
                         'variety': _varietyController.text,
                         'days': _daysController.text,
+                        if (isEspresso) 'espresso_machine': _espressoMachineController.text,
+                        if (isEspresso) 'grinder': _grinderController.text,
+                        if (isEspresso) 'roast_date': _roastDate?.toIso8601String(),
                       };
                       
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => ActiveSessionPage(
-                            method: viewModel.selectedMethod!,
-                            sessionInfo: sessionInfo,
+                      if (isEspresso) {
+                        // Show level selection for espresso
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => _SessionLevelSelection(
+                              method: viewModel.selectedMethod!,
+                              sessionInfo: sessionInfo,
+                            ),
                           ),
-                        ),
-                      );
+                        );
+                      } else {
+                        // Go directly to active session for filter
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ActiveSessionPage(
+                              method: viewModel.selectedMethod!,
+                              sessionInfo: sessionInfo,
+                              isAdvanced: false,
+                            ),
+                          ),
+                        );
+                      }
                     }
                   },
                   style: FilledButton.styleFrom(
@@ -232,7 +325,7 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text(
-                        'START SESSION',
+                        'CONTINUE',
                         style: GoogleFonts.montserrat(
                           fontSize: 16,
                           fontWeight: FontWeight.w900,
@@ -252,6 +345,15 @@ class _SessionSetupFormState extends State<_SessionSetupForm> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _varietyController.dispose();
+    _daysController.dispose();
+    _espressoMachineController.dispose();
+    _grinderController.dispose();
+    super.dispose();
+  }
 }
 
 class _CustomTextField extends StatelessWidget {
@@ -261,6 +363,7 @@ class _CustomTextField extends StatelessWidget {
   final Color accentColor;
   final TextInputType? keyboardType;
   final String? suffixText;
+  final bool readOnly;
 
   const _CustomTextField({
     required this.label,
@@ -269,6 +372,7 @@ class _CustomTextField extends StatelessWidget {
     required this.accentColor,
     this.keyboardType,
     this.suffixText,
+    this.readOnly = false,
   });
 
   @override
@@ -276,6 +380,7 @@ class _CustomTextField extends StatelessWidget {
     return TextFormField(
       controller: controller,
       keyboardType: keyboardType,
+      readOnly: readOnly,
       style: GoogleFonts.montserrat(fontWeight: FontWeight.w500),
       decoration: InputDecoration(
         labelText: label,
@@ -301,3 +406,151 @@ class _CustomTextField extends StatelessWidget {
   }
 }
 
+// New component for session level selection
+class _SessionLevelSelection extends StatelessWidget {
+  final CalibrationMethod method;
+  final Map<String, dynamic> sessionInfo;
+
+  const _SessionLevelSelection({
+    required this.method,
+    required this.sessionInfo,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final accentColor = AppColors.cardEspresso;
+
+    return Scaffold(
+      backgroundColor: AppColors.background,
+      appBar: AppBar(
+        backgroundColor: AppColors.background,
+        surfaceTintColor: Colors.transparent,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: AppColors.textPrimary),
+        title: Text(
+          "CHOOSE LEVEL",
+          style: GoogleFonts.montserrat(
+            fontWeight: FontWeight.w900,
+            color: AppColors.textPrimary,
+            letterSpacing: 1.0,
+            fontSize: 16,
+          ),
+        ),
+        centerTitle: true,
+      ),
+      body: Padding(
+        padding: const EdgeInsets.all(20.0),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            FadeInUp(
+              child: _LevelCard(
+                title: "BASIC",
+                description: "Simple recipe tracking with essential parameters",
+                icon: Icons.school,
+                color: accentColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ActiveSessionPage(
+                        method: method,
+                        sessionInfo: sessionInfo,
+                        isAdvanced: false,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+            const SizedBox(height: 24),
+            FadeInUp(
+              delay: const Duration(milliseconds: 200),
+              child: _LevelCard(
+                title: "ADVANCED",
+                description: "Detailed calibration with pre-infusion, temperature & notes",
+                icon: Icons.science,
+                color: accentColor,
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => ActiveSessionPage(
+                        method: method,
+                        sessionInfo: sessionInfo,
+                        isAdvanced: true,
+                      ),
+                    ),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _LevelCard extends StatelessWidget {
+  final String title;
+  final String description;
+  final IconData icon;
+  final Color color;
+  final VoidCallback onTap;
+
+  const _LevelCard({
+    required this.title,
+    required this.description,
+    required this.icon,
+    required this.color,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.all(24),
+        decoration: BoxDecoration(
+          color: color.withValues(alpha: 0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color, width: 2),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Icon(icon, size: 40, color: color),
+            const SizedBox(height: 16),
+            Text(
+              title,
+              style: GoogleFonts.montserrat(
+                fontSize: 20,
+                fontWeight: FontWeight.w900,
+                color: AppColors.textPrimary,
+                letterSpacing: 1.0,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              description,
+              style: GoogleFonts.montserrat(
+                fontSize: 13,
+                color: AppColors.textPrimary.withValues(alpha: 0.7),
+                height: 1.5,
+              ),
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                Icon(Icons.arrow_forward, color: color),
+              ],
+            ),
+          ],
+        ),      ),
+    );
+  }
+}
